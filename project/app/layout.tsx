@@ -8,7 +8,10 @@ import { Toaster } from '@/components/ui/sonner';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' });
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
   title: 'Airdrop Hunt — Discover the Best Crypto Airdrops, Guides, and Web3 Opportunities',
   description:
     'Track promising airdrops, read expert crypto guides, and submit your own articles or airdrop opportunities on Airdrop Hunt — a premium community-powered Web3 discovery platform.',
