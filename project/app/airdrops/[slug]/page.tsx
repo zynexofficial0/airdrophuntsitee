@@ -7,8 +7,10 @@ import { getAirdropBySlug, getRelatedAirdrops } from '@/lib/queries';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { AirdropCard } from '@/components/airdrops/airdrop-card';
 import { Button } from '@/components/ui/button';
+import { SchemaScript } from '@/components/shared/schema-script';
+import { generateAirdropSchema, generateBreadcrumbSchema } from '@/lib/schema';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 1800; // ISR: Revalidate every 30 minutes (airdrops change more frequently)
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const airdrop = await getAirdropBySlug(params.slug);
@@ -33,8 +35,17 @@ export default async function AirdropDetailPage({ params }: { params: { slug: st
     { url: airdrop.discord_url, icon: MessageCircle, label: 'Discord' },
   ].filter((s) => s.url);
 
+  const airdropSchema = generateAirdropSchema(airdrop);
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000' },
+    { name: 'Airdrops', url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/airdrops` },
+    { name: airdrop.project_name, url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/airdrops/${airdrop.slug}` },
+  ]);
+
   return (
     <div className="container mx-auto px-4 py-12">
+      <SchemaScript schema={airdropSchema} />
+      <SchemaScript schema={breadcrumbSchema} />
       <Link href="/airdrops" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Back to Airdrops
       </Link>

@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Allow search engines to crawl all pages
+Allow: /
+
+# Disallow admin pages
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://airdrophunt.io/sitemap.xml

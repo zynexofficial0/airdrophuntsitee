@@ -2,12 +2,15 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, User, Calendar, Twitter, Send, Link2, Share2 } from 'lucide-react';
+import { ArrowLeft, User, Calendar, Twitter, Send, Link2, Share2, Clock } from 'lucide-react';
 import { getArticleBySlug, getRelatedArticles } from '@/lib/queries';
 import { ArticleCard } from '@/components/articles/article-card';
 import { ArticleShareButtons } from '@/components/articles/article-share-buttons';
+import { calculateReadingTime, formatDate } from '@/lib/utils';
+import { SchemaScript } from '@/components/shared/schema-script';
+import { generateArticleSchema, generateBreadcrumbSchema } from '@/lib/schema';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR: Revalidate every hour
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const article = await getArticleBySlug(params.slug);
@@ -25,9 +28,19 @@ export default async function ArticleDetailPage({ params }: { params: { slug: st
 
   const related = await getRelatedArticles(article.category, article.id, 3);
   const dateStr = new Date(article.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const readingTime = calculateReadingTime(article.article_content);
+
+  const articleSchema = generateArticleSchema(article);
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000' },
+    { name: 'Articles', url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/articles` },
+    { name: article.article_title, url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/articles/${article.slug}` },
+  ]);
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <SchemaScript schema={articleSchema} />
+      <SchemaScript schema={breadcrumbSchema} />
       <Link href="/articles" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Back to Articles
       </Link>
@@ -42,12 +55,15 @@ export default async function ArticleDetailPage({ params }: { params: { slug: st
             {article.article_title}
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed mb-6">{article.excerpt}</p>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
             <span className="flex items-center gap-1.5">
               <User className="w-4 h-4 text-primary" /> {article.author}
             </span>
             <span className="flex items-center gap-1.5">
               <Calendar className="w-4 h-4 text-primary" /> {dateStr}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-primary" /> {readingTime} min read
             </span>
           </div>
         </div>

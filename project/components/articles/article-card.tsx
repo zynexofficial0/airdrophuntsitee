@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, User, Calendar } from 'lucide-react';
+import { ArrowRight, User, Clock } from 'lucide-react';
 import type { Article } from '@/types';
 import { TiltCard } from '@/components/shared/tilt-card';
-import { cn } from '@/lib/utils';
+import { cn, calculateReadingTime } from '@/lib/utils';
 
 export function ArticleCard({ article, featured = false }: { article: Article; featured?: boolean }) {
+  const readingTime = calculateReadingTime(article.article_content);
+  
   return (
     <TiltCard
       glow={featured}
@@ -35,10 +37,14 @@ export function ArticleCard({ article, featured = false }: { article: Article; f
         <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">
           {article.excerpt}
         </p>
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span className="flex items-center gap-1.5">
+        <div className="flex items-center justify-between text-xs text-muted-foreground gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5">
             <User className="w-3.5 h-3.5" />
             {article.author}
+          </div>
+          <span className="flex items-center gap-1 text-muted-foreground">
+            <Clock className="w-3.5 h-3.5" />
+            {readingTime} min
           </span>
           <Link
             href={`/articles/${article.slug}`}
