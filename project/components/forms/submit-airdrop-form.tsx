@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { Loader2, Rocket, CheckCircle2 } from 'lucide-react';
-import { getBrowserSupabase } from '@/lib/supabase/client';
 import { slugify, ensureUniqueSlug } from '@/lib/utils/slug';
 import { ImageUpload } from '@/components/forms/image-upload';
 import { Input } from '@/components/ui/input';
@@ -61,32 +60,38 @@ export function SubmitAirdropForm() {
     }
     setSubmitting(true);
     try {
-      const supabase = getBrowserSupabase();
       const baseSlug = slugify(data.project_name);
       const slug = ensureUniqueSlug(`${baseSlug}-airdrop`);
 
-      const { error } = await supabase.from('submitted_airdrops').insert({
-        project_name: data.project_name,
-        short_description: data.short_description,
-        full_description: data.full_description,
-        participation_steps: data.participation_steps,
-        category: data.category,
-        chain: data.chain,
-        reward_info: data.reward_info,
-        start_date: data.start_date || null,
-        end_date: data.end_date || null,
-        website_url: data.website_url || null,
-        twitter_url: data.twitter_url || null,
-        telegram_url: data.telegram_url || null,
-        discord_url: data.discord_url || null,
-        logo_url: logoUrl,
-        submitter_name: data.submitter_name,
-        status: 'pending',
-        featured: false,
-        slug,
-      } as never);
+      const response = await fetch('/api/submit-airdrop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          project_name: data.project_name,
+          short_description: data.short_description,
+          full_description: data.full_description,
+          participation_steps: data.participation_steps,
+          category: data.category,
+          chain: data.chain,
+          reward_info: data.reward_info,
+          start_date: data.start_date || null,
+          end_date: data.end_date || null,
+          website_url: data.website_url || null,
+          twitter_url: data.twitter_url || null,
+          telegram_url: data.telegram_url || null,
+          discord_url: data.discord_url || null,
+          logo_url: logoUrl,
+          submitter_name: data.submitter_name,
+          status: 'pending',
+          featured: false,
+          slug,
+        }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result?.error || 'Submission failed');
+      }
 
       toast.success('Your airdrop has been submitted successfully.');
       setSuccess(true);
