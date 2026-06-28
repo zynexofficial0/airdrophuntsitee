@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowLeft, CheckCircle, XCircle, Star, Zap } from 'lucide-react';
 import { getLatestAirdrops } from '@/lib/queries';
 import { AirdropsManagementTable } from '@/components/admin/airdrops-management-table';
+import { BulkApproveAirdropsButton } from '@/components/admin/bulk-approve-airdrops-button';
 
 export const metadata: Metadata = {
   title: 'Manage Airdrops — Admin',
@@ -28,13 +29,16 @@ export default async function ManageAirdropsPage() {
         <ArrowLeft className="w-4 h-4" /> Back to Dashboard
       </Link>
 
-      <div className="mb-8">
-        <h1 className="font-display text-4xl font-bold tracking-tight mb-2">
-          Manage <span className="gradient-green-text">Airdrops</span>
-        </h1>
-        <p className="text-muted-foreground">
-          Review, approve, feature, and manage airdrop submissions.
-        </p>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="font-display text-4xl font-bold tracking-tight mb-2">
+            Manage <span className="gradient-green-text">Airdrops</span>
+          </h1>
+          <p className="text-muted-foreground">
+            Review, approve, feature, and manage airdrop submissions.
+          </p>
+        </div>
+        <BulkApproveAirdropsButton pendingCount={byStatus.pending.length} />
       </div>
 
       {/* Status Cards */}
