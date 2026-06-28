@@ -64,7 +64,7 @@ export function SubmitArticleForm() {
   article_content: data.article_content,
   article_logo_url: logoUrl,
   tags: data.tags || null,
-  status: 'pending',
+  status: 'approved',
   featured: false,
   slug,
 };

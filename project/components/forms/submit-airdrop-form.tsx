@@ -82,7 +82,7 @@ export function SubmitAirdropForm() {
           discord_url: data.discord_url || null,
           logo_url: logoUrl,
           submitter_name: data.submitter_name,
-          status: 'pending',
+          status: 'approved',
           featured: false,
           slug,
         }),
