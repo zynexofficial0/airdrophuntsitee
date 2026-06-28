@@ -12,11 +12,35 @@ import {
 
 export const dynamic = 'force-dynamic';
 
+async function safeGetStats() {
+  try {
+    return await getStats();
+  } catch {
+    return { airdrops: 0, articles: 0, active: 0 };
+  }
+}
+
+async function safeGetFeaturedAirdrops() {
+  try {
+    return await getFeaturedAirdrops(4);
+  } catch {
+    return [];
+  }
+}
+
+async function safeGetFeaturedArticles() {
+  try {
+    return await getFeaturedArticles(3);
+  } catch {
+    return [];
+  }
+}
+
 export default async function Home() {
   const [stats, featuredAirdrops, featuredArticles] = await Promise.all([
-    getStats(),
-    getFeaturedAirdrops(4),
-    getFeaturedArticles(3),
+    safeGetStats(),
+    safeGetFeaturedAirdrops(),
+    safeGetFeaturedArticles(),
   ]);
 
   return (
