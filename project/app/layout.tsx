@@ -1,9 +1,10 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/sonner';
+import { Analytics } from '@/components/shared/analytics';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' });
@@ -15,17 +16,49 @@ export const metadata: Metadata = {
   title: 'Airdrop Hunt — Discover the Best Crypto Airdrops, Guides, and Web3 Opportunities',
   description:
     'Track promising airdrops, read expert crypto guides, and submit your own articles or airdrop opportunities on Airdrop Hunt — a premium community-powered Web3 discovery platform.',
+  keywords: [
+    'airdrop',
+    'crypto',
+    'web3',
+    'blockchain',
+    'defi',
+    'token',
+    'cryptocurrency',
+    'guides',
+  ],
   openGraph: {
     title: 'Airdrop Hunt',
     description: 'Discover the Best Crypto Airdrops, Guides, and Web3 Opportunities',
     type: 'website',
+    locale: 'en_US',
   },
-  twitter: { card: 'summary_large_image' },
+  twitter: { 
+    card: 'summary_large_image',
+    creator: '@airdrophunt',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    'max-image-preview': 'large',
+    'max-snippet': -1,
+    'max-video-preview': -1,
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: '#0d1117',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <head>
+        <Analytics />
+      </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-1">{children}</main>
