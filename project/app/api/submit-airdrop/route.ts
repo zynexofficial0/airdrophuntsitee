@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
 
   const supabase = getServerSupabase();
   const { error } = await (supabase.from('submitted_airdrops') as any).insert({
+    id: crypto.randomUUID(),
     project_name,
     short_description,
     full_description,
