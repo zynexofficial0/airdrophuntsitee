@@ -56,20 +56,32 @@ export function SubmitArticleForm() {
       const baseSlug = slugify(data.article_title);
       const slug = ensureUniqueSlug(baseSlug);
 
-      const { error } = await supabase.from('submitted_articles').insert({
-        article_title: data.article_title,
-        excerpt: data.excerpt,
-        author: data.author,
-        category: data.category,
-        article_content: data.article_content,
-        article_logo_url: logoUrl,
-        tags: data.tags || null,
-        status: 'pending',
-        featured: false,
-        slug,
-      } as never);
+      const payload = {
+  article_title: data.article_title,
+  excerpt: data.excerpt,
+  author: data.author,
+  category: data.category,
+  article_content: data.article_content,
+  article_logo_url: logoUrl,
+  tags: data.tags || null,
+  status: 'pending',
+  featured: false,
+  slug,
+};
 
-      if (error) throw error;
+console.log("Submitting payload:", payload);
+
+const { data: insertedArticle, error } = await supabase
+  .from("submitted_articles")
+  .insert(payload)
+  .select();
+
+console.log("Inserted Article:", insertedArticle);
+console.log("Insert Error:", error);
+
+if (error) {
+  throw error;
+}
 
       toast.success('Your article has been submitted successfully.');
       setSuccess(true);
