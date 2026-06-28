@@ -1,13 +1,40 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Check, X, Star, Eye } from 'lucide-react';
+import { toast } from 'sonner';
 import type { Article } from '@/types';
 import { cn } from '@/lib/utils';
 
 export function ArticlesManagementTable({ articles }: { articles: Article[] }) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleStatusChange = async (id: string, status: 'approved' | 'rejected') => {
+    setBusyId(id);
+    try {
+      const response = await fetch('/api/admin/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemType: 'article', id, status }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error?.error || 'Failed to update article status');
+      }
+
+      toast.success(`Article ${status} successfully.`);
+      router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to update article');
+    } finally {
+      setBusyId(null);
+    }
+  };
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -102,14 +129,20 @@ export function ArticlesManagementTable({ articles }: { articles: Article[] }) {
                     {article.status === 'pending' && (
                       <>
                         <button
+                          type="button"
                           className="p-1.5 rounded-md hover:bg-green-500/20 text-muted-foreground hover:text-green-400 transition-colors"
                           title="Approve"
+                          onClick={() => handleStatusChange(article.id, 'approved')}
+                          disabled={busyId === article.id}
                         >
                           <Check className="w-4 h-4" />
                         </button>
                         <button
+                          type="button"
                           className="p-1.5 rounded-md hover:bg-red-500/20 text-muted-foreground hover:text-red-400 transition-colors"
                           title="Reject"
+                          onClick={() => handleStatusChange(article.id, 'rejected')}
+                          disabled={busyId === article.id}
                         >
                           <X className="w-4 h-4" />
                         </button>

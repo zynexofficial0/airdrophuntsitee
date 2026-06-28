@@ -71,8 +71,7 @@ export function SubmitArticleForm() {
 
 console.log("Submitting payload:", payload);
 
-const { data: insertedArticle, error } = await supabase
-  .from("submitted_articles")
+const { data: insertedArticle, error } = await (supabase.from("submitted_articles") as any)
   .insert(payload)
   .select();
 

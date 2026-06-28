@@ -24,7 +24,9 @@ export function generateMeta(options: {
     metadataBase: new URL(baseUrl),
     title,
     description,
-    canonical: url,
+    alternates: {
+      canonical: url,
+    },
     openGraph: {
       title,
       description,

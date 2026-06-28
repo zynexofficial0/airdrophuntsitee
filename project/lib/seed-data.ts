@@ -898,7 +898,7 @@ export async function seedDatabase() {
     // Insert articles
     console.log("Inserting articles...");
     for (const article of articles) {
-      const { error } = await supabase.from("submitted_articles").insert({
+      const { error } = await (supabase.from("submitted_articles") as any).insert({
         ...article,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -913,7 +913,7 @@ export async function seedDatabase() {
     // Insert airdrops
     console.log("Inserting airdrops...");
     for (const airdrop of airdrops) {
-      const { error } = await supabase.from("submitted_airdrops").insert({
+      const { error } = await (supabase.from("submitted_airdrops") as any).insert({
         ...airdrop,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),

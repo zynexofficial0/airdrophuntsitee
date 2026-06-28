@@ -1,5 +1,5 @@
 import './globals.css';
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = {
+export const viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,

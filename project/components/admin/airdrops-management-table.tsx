@@ -1,13 +1,40 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Check, X, Star, Eye } from 'lucide-react';
+import { toast } from 'sonner';
 import type { Airdrop } from '@/types';
 import { cn } from '@/lib/utils';
 
 export function AirdropsManagementTable({ airdrops }: { airdrops: Airdrop[] }) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleStatusChange = async (id: string, status: 'live' | 'upcoming' | 'ended' | 'pending') => {
+    setBusyId(id);
+    try {
+      const response = await fetch('/api/admin/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemType: 'airdrop', id, status }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error?.error || 'Failed to update airdrop status');
+      }
+
+      toast.success('Airdrop status updated successfully.');
+      router.refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to update airdrop');
+    } finally {
+      setBusyId(null);
+    }
+  };
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -43,7 +70,7 @@ export function AirdropsManagementTable({ airdrops }: { airdrops: Airdrop[] }) {
               <th className="px-4 py-3 text-left font-semibold">Chain</th>
               <th className="px-4 py-3 text-left font-semibold">Category</th>
               <th className="px-4 py-3 text-left font-semibold">Status</th>
-              <th className="px-4 py-3 text-left font-semibold">Reward Est.</th>
+              <th className="px-4 py-3 text-left font-semibold">Reward Info</th>
               <th className="px-4 py-3 text-left font-semibold">Actions</th>
             </tr>
           </thead>
@@ -93,7 +120,9 @@ export function AirdropsManagementTable({ airdrops }: { airdrops: Airdrop[] }) {
                     </span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-muted-foreground text-xs">${airdrop.reward_estimate?.toLocaleString() || '—'}</td>
+                <td className="px-4 py-3 text-muted-foreground text-xs">
+                  {airdrop.reward_info ? airdrop.reward_info : '—'}
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
                     <Link
@@ -106,14 +135,20 @@ export function AirdropsManagementTable({ airdrops }: { airdrops: Airdrop[] }) {
                     {airdrop.status === 'pending' && (
                       <>
                         <button
+                          type="button"
                           className="p-1.5 rounded-md hover:bg-green-500/20 text-muted-foreground hover:text-green-400 transition-colors"
                           title="Approve"
+                          onClick={() => handleStatusChange(airdrop.id, 'live')}
+                          disabled={busyId === airdrop.id}
                         >
                           <Check className="w-4 h-4" />
                         </button>
                         <button
+                          type="button"
                           className="p-1.5 rounded-md hover:bg-red-500/20 text-muted-foreground hover:text-red-400 transition-colors"
                           title="Reject"
+                          onClick={() => handleStatusChange(airdrop.id, 'ended')}
+                          disabled={busyId === airdrop.id}
                         >
                           <X className="w-4 h-4" />
                         </button>

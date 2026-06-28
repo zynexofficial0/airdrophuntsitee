@@ -2,6 +2,9 @@ import { createClient } from "@supabase/supabase-js";
 import { Database } from "@/types/database";
 import { NextResponse } from "next/server";
 
+type SubmittedArticleInsert = Database["public"]["Tables"]["submitted_articles"]["Insert"];
+type SubmittedAirdropInsert = Database["public"]["Tables"]["submitted_airdrops"]["Insert"];
+
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -550,7 +553,7 @@ export async function POST() {
     // Insert articles
     console.log("[seed] Inserting 15 articles...");
     for (const article of articles) {
-      await supabase.from("submitted_articles").insert({
+      await (supabase.from("submitted_articles") as any).insert({
         ...article,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -560,7 +563,7 @@ export async function POST() {
     // Insert airdrops
     console.log("[seed] Inserting 15 airdrops...");
     for (const airdrop of airdrops) {
-      await supabase.from("submitted_airdrops").insert({
+      await (supabase.from("submitted_airdrops") as any).insert({
         ...airdrop,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
