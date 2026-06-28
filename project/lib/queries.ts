@@ -111,3 +111,78 @@ export async function getStats() {
     active: activeRes.count ?? 0,
   };
 }
+
+// Pagination queries
+export async function getAirdropsWithPagination(
+  page = 1,
+  pageSize = 12,
+  category?: string,
+  status?: string,
+  search?: string
+): Promise<{ data: Airdrop[]; total: number; pages: number }> {
+  const supabase = getServerSupabase();
+  let query = supabase.from('submitted_airdrops').select('*', { count: 'exact' });
+
+  if (category && category !== 'all') {
+    query = query.eq('category', category);
+  }
+  if (status && status !== 'all') {
+    query = query.eq('status', status);
+  }
+  if (search) {
+    query = query.or(
+      `project_name.ilike.%${search}%,short_description.ilike.%${search}%`
+    );
+  }
+
+  const totalResult = await query;
+  const total = totalResult.count ?? 0;
+  const pages = Math.ceil(total / pageSize);
+  const start = (page - 1) * pageSize;
+
+  const { data } = await query
+    .order('featured', { ascending: false })
+    .order('created_at', { ascending: false })
+    .range(start, start + pageSize - 1);
+
+  return {
+    data: (data as unknown as Airdrop[]) ?? [],
+    total,
+    pages,
+  };
+}
+
+export async function getArticlesWithPagination(
+  page = 1,
+  pageSize = 12,
+  category?: string,
+  search?: string
+): Promise<{ data: Article[]; total: number; pages: number }> {
+  const supabase = getServerSupabase();
+  let query = supabase.from('submitted_articles').select('*', { count: 'exact' });
+
+  if (category && category !== 'all') {
+    query = query.eq('category', category);
+  }
+  if (search) {
+    query = query.or(
+      `article_title.ilike.%${search}%,excerpt.ilike.%${search}%`
+    );
+  }
+
+  const totalResult = await query;
+  const total = totalResult.count ?? 0;
+  const pages = Math.ceil(total / pageSize);
+  const start = (page - 1) * pageSize;
+
+  const { data } = await query
+    .order('featured', { ascending: false })
+    .order('created_at', { ascending: false })
+    .range(start, start + pageSize - 1);
+
+  return {
+    data: (data as unknown as Article[]) ?? [],
+    total,
+    pages,
+  };
+}
