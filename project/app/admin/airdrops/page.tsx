@@ -15,9 +15,10 @@ export default async function ManageAirdropsPage() {
   const airdrops = await getLatestAirdrops(100);
 
   const byStatus = {
-    approved: airdrops.filter((a) => a.status === 'approved'),
+    live: airdrops.filter((a) => a.status === 'live'),
+    upcoming: airdrops.filter((a) => a.status === 'upcoming'),
+    ended: airdrops.filter((a) => a.status === 'ended'),
     pending: airdrops.filter((a) => a.status === 'pending'),
-    rejected: airdrops.filter((a) => a.status === 'rejected'),
     featured: airdrops.filter((a) => a.featured),
   };
 
@@ -37,29 +38,37 @@ export default async function ManageAirdropsPage() {
       </div>
 
       {/* Status Cards */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         <div className="glass rounded-xl p-4 border border-border/60">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground">Approved</span>
+            <span className="text-sm text-muted-foreground">Live</span>
             <CheckCircle className="w-4 h-4 text-green-500" />
           </div>
-          <p className="text-2xl font-bold">{byStatus.approved.length}</p>
+          <p className="text-2xl font-bold">{byStatus.live.length}</p>
+        </div>
+
+        <div className="glass rounded-xl p-4 border border-border/60">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-muted-foreground">Upcoming</span>
+            <Zap className="w-4 h-4 text-yellow-500" />
+          </div>
+          <p className="text-2xl font-bold">{byStatus.upcoming.length}</p>
+        </div>
+
+        <div className="glass rounded-xl p-4 border border-border/60">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-muted-foreground">Ended</span>
+            <XCircle className="w-4 h-4 text-red-500" />
+          </div>
+          <p className="text-2xl font-bold">{byStatus.ended.length}</p>
         </div>
 
         <div className="glass rounded-xl p-4 border border-border/60">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Pending</span>
-            <XCircle className="w-4 h-4 text-yellow-500" />
+            <XCircle className="w-4 h-4 text-orange-500" />
           </div>
           <p className="text-2xl font-bold">{byStatus.pending.length}</p>
-        </div>
-
-        <div className="glass rounded-xl p-4 border border-border/60">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground">Rejected</span>
-            <XCircle className="w-4 h-4 text-red-500" />
-          </div>
-          <p className="text-2xl font-bold">{byStatus.rejected.length}</p>
         </div>
 
         <div className="glass rounded-xl p-4 border border-border/60">
@@ -71,33 +80,43 @@ export default async function ManageAirdropsPage() {
         </div>
       </div>
 
+      {/* Live Section */}
+      {byStatus.live.length > 0 && (
+        <div className="mb-12">
+          <h2 className="font-display text-2xl font-bold mb-4">
+            Live Airdrops ({byStatus.live.length})
+          </h2>
+          <AirdropsManagementTable airdrops={byStatus.live} />
+        </div>
+      )}
+
+      {/* Upcoming Section */}
+      {byStatus.upcoming.length > 0 && (
+        <div className="mb-12">
+          <h2 className="font-display text-2xl font-bold mb-4">
+            Upcoming Airdrops ({byStatus.upcoming.length})
+          </h2>
+          <AirdropsManagementTable airdrops={byStatus.upcoming} />
+        </div>
+      )}
+
+      {/* Ended Section */}
+      {byStatus.ended.length > 0 && (
+        <div className="mb-12">
+          <h2 className="font-display text-2xl font-bold mb-4">
+            Ended Airdrops ({byStatus.ended.length})
+          </h2>
+          <AirdropsManagementTable airdrops={byStatus.ended} />
+        </div>
+      )}
+
       {/* Pending Section */}
       {byStatus.pending.length > 0 && (
-        <div className="mb-12">
+        <div>
           <h2 className="font-display text-2xl font-bold mb-4">
             Pending Review ({byStatus.pending.length})
           </h2>
           <AirdropsManagementTable airdrops={byStatus.pending} />
-        </div>
-      )}
-
-      {/* Approved Section */}
-      {byStatus.approved.length > 0 && (
-        <div className="mb-12">
-          <h2 className="font-display text-2xl font-bold mb-4">
-            Approved Airdrops ({byStatus.approved.length})
-          </h2>
-          <AirdropsManagementTable airdrops={byStatus.approved} />
-        </div>
-      )}
-
-      {/* Rejected Section */}
-      {byStatus.rejected.length > 0 && (
-        <div>
-          <h2 className="font-display text-2xl font-bold mb-4">
-            Rejected Airdrops ({byStatus.rejected.length})
-          </h2>
-          <AirdropsManagementTable airdrops={byStatus.rejected} />
         </div>
       )}
     </div>
