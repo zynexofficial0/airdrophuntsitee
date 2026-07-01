@@ -20,29 +20,29 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="relative mt-20 border-t border-border/60 glass-strong">
+    <footer className="relative mt-20 border-t border-white/10 glass-strong">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-          <div className="col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="gradient-green w-9 h-9 rounded-lg flex items-center justify-center">
-                <Rocket className="w-5 h-5 text-black" />
+        <div className="grid gap-8 md:grid-cols-5 md:grid-cols-[1.2fr_0.6fr_0.6fr_0.6fr]">
+          <div className="md:col-span-2">
+            <Link href="/" className="mb-4 flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-300 to-cyan-400">
+                <Rocket className="h-5 w-5 text-black" />
               </div>
-              <span className="font-display font-bold text-lg">
+              <span className="font-display text-lg font-bold text-white">
                 Airdrop<span className="gradient-green-text">Hunt</span>
               </span>
             </Link>
-            <p className="text-sm text-muted-foreground max-w-xs">
+            <p className="max-w-xs text-sm text-muted-foreground">
               The premium community-powered Web3 discovery platform. Track airdrops, read guides, and submit your own opportunities.
             </p>
-            <div className="flex items-center gap-3 mt-4">
+            <div className="mt-4 flex items-center gap-3">
               {[Twitter, Send, Github, Mail].map((Icon, i) => (
                 <a
                   key={i}
                   href="#"
-                  className="w-9 h-9 rounded-lg glass flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-muted-foreground transition-colors hover:border-emerald-400/40 hover:text-emerald-200"
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
@@ -50,13 +50,13 @@ export function Footer() {
 
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
-              <h4 className="font-semibold text-sm mb-3 text-foreground">{title}</h4>
+              <h4 className="mb-3 text-sm font-semibold text-foreground">{title}</h4>
               <ul className="space-y-2">
                 {links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                      className="text-sm text-muted-foreground transition-colors hover:text-emerald-200"
                     >
                       {link.label}
                     </Link>
@@ -67,7 +67,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-10 pt-6 border-t border-border/40 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 md:flex-row">
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} Airdrop Hunt. All rights reserved.
           </p>
